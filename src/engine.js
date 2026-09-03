@@ -259,6 +259,14 @@ const EMU_PRESETS = {
   }
 };
 
+function normalizeMouseDpi(value) {
+  const dpi = Number(value);
+  if (!Number.isFinite(dpi) || dpi < 100 || dpi > 16000) return 800;
+  const rounded = Math.round(dpi);
+  if (rounded <= 800) return Math.max(200, Math.round(rounded / 200) * 200);
+  return Math.min(16000, Math.round(rounded / 100) * 100);
+}
+
 function generateEmulator(data) {
   const emuKey = EMULATORS[data.emulator] ? data.emulator : 'bluestacks';
   const emu = EMULATORS[emuKey];
@@ -271,8 +279,13 @@ function generateEmulator(data) {
 
   // compensação pela DPI do mouse: mouse rápido -> sensi menor
   let dpiComp = 0;
-  const mouseDpi = parseInt(data.mouseDpi, 10);
-  if (Number.isInteger(mouseDpi) && mouseDpi >= 100 && mouseDpi <= 16000) {
+  const hasMouseDpi =
+    data.mouseDpi !== null &&
+    data.mouseDpi !== undefined &&
+    String(data.mouseDpi).trim() !== '' &&
+    Number.isFinite(Number(data.mouseDpi));
+  const mouseDpi = normalizeMouseDpi(data.mouseDpi);
+  if (hasMouseDpi) {
     dpiComp = clamp(Math.round((800 - mouseDpi) / 40), -14, 14);
   }
 
@@ -288,10 +301,6 @@ function generateEmulator(data) {
     values[k] = clamp(jitter(v, 2), 1, 200);
   }
 
-  const dpi = Number.isInteger(mouseDpi) && mouseDpi >= 100 && mouseDpi <= 16000
-    ? clamp(Math.round(mouseDpi / 10) * 10, 400, 1200)
-    : 800;
-
   return {
     mode: 'emulador',
     emulator: emuKey,
@@ -299,7 +308,7 @@ function generateEmulator(data) {
     preset: presetKey,
     presetLabel: presetKey ? EMU_PRESETS[presetKey].label : null,
     values,
-    dpi,
+    dpi: mouseDpi,
     fireButton: null,
     summary: 'Config para ' + emu.label
       + (presetKey ? ' · preset "' + EMU_PRESETS[presetKey].label + '"' : '')

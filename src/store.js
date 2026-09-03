@@ -50,7 +50,7 @@ const DEFAULT_DB = {
   settings: {
     contactLink: '',
     freeDailyLimit: 3,
-    adminPanelPath: '/painel-admin',
+    adminPanelPath: '/aimzy',
     announcement: null,
     prices: {
       premium: {

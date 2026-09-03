@@ -27,7 +27,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const ADMIN_PANEL_PATH = '/painel-admin';
+const ADMIN_PANEL_PATH = '/aimzy';
 
 
 
@@ -78,7 +78,8 @@ app.use((req, res, next) => {
 
   if (
     req.path.startsWith('/api/admin') ||
-    req.path === ADMIN_PANEL_PATH
+    req.path === ADMIN_PANEL_PATH ||
+    req.path === ADMIN_PANEL_PATH + '/'
   ) {
 
     res.setHeader(
@@ -4484,6 +4485,15 @@ function ensurePanelPath() {
 
 
 app.use(
+  (req, res, next) => {
+    if (req.path === '/painel-admin' || req.path === '/painel-admin/') {
+      return res.redirect(302, '/');
+    }
+    next();
+  }
+);
+
+app.use(
   express.static(
     path.join(
       __dirname,
@@ -4501,8 +4511,8 @@ app.use(
   (req, res, next) => {
 
     if (
-      req.path !==
-      ADMIN_PANEL_PATH
+      req.path !== ADMIN_PANEL_PATH &&
+      req.path !== ADMIN_PANEL_PATH + '/'
     ) {
 
       return next();

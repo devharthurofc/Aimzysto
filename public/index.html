@@ -386,7 +386,7 @@ footer b{color:var(--text-secondary)}
       <a href="#generator">🎯 Gerador</a>
       <a href="/stretch/">📱 Tela Esticada</a>
       <a href="/emulator/">🖥️ Emulador</a>
-      <a href="/painel-admin">💬 Fale com Admin</a>
+      <a href="/aimzy">💬 Fale com Admin</a>
       <button class="nav-enter" id="navEnterBtn">ENTRAR</button>
     </div>
     <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -398,7 +398,7 @@ footer b{color:var(--text-secondary)}
     <a href="#generator">🎯 Gerador</a>
     <a href="/stretch/">📱 Tela Esticada</a>
     <a href="/emulator/">🖥️ Emulador</a>
-    <a href="/painel-admin">💬 Fale com Admin</a>
+    <a href="/aimzy">💬 Fale com Admin</a>
     <button class="nav-enter" id="navEnterBtnMobile">ENTRAR</button>
   </div>
 </nav>
@@ -578,7 +578,12 @@ footer b{color:var(--text-secondary)}
       </select>
 
       <label class="field-label">DPI do mouse (opcional)</label>
-      <input type="number" class="inp" id="mouseDpi" min="100" max="16000" placeholder="Ex: 800" style="max-width:260px">
+      <input type="number" class="inp" id="mouseDpi" min="200" max="16000" step="100" list="mouseDpiSteps" placeholder="Ex: 800" style="max-width:260px">
+      <datalist id="mouseDpiSteps">
+        <option value="200"><option value="400"><option value="600"><option value="800">
+        <option value="900"><option value="1000"><option value="1200"><option value="1600">
+        <option value="2000"><option value="2400"><option value="3200"><option value="4000">
+      </datalist>
 
       <label class="field-label">Sensibilidade do mouse no emulador (opcional)</label>
       <input type="number" class="inp" id="mouseSens" min="0.5" max="100" step="0.5" placeholder="Ex: 25" style="max-width:260px">
@@ -1015,9 +1020,12 @@ document.getElementById('navEnterBtnMobile')?.addEventListener('click', function
   document.getElementById('accountChip')?.click();
 });
 
-// Quando a pessoa entra no site, pede o nome automaticamente e rola para o gerador
+// Exibe o modal apenas para quem ainda não informou um nome.
 window.addEventListener('load', function() {
+  if (localStorage.getItem('sensipro_user_name')) return;
+  if (window.__pendingShowNameModal) return;
   setTimeout(function() {
+    if (localStorage.getItem('sensipro_user_name')) return;
     showNameModal();
     document.getElementById('generator').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 300);

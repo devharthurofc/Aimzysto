@@ -6,7 +6,7 @@
 2. Dê dois cliques em **`INICIAR.bat`** dentro da pasta `sensi-freefire`
 3. Abra no navegador:
    - Site: `http://localhost:3000`
-   - Painel admin: `http://localhost:3000/painel-admin`
+   - Painel admin: `http://localhost:3000/aimzy`
 
 Para parar o servidor: feche a janela preta (ou Ctrl+C).
 

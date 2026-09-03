@@ -197,8 +197,8 @@ const EMU_NAMES = [
   ["mira2x", "Mira 2X"],
   ["mira4x", "Mira 4X"],
   ["miraAwm", "Mira AWM"],
-  ["sensX", "Sensibilidade X"],
-  ["sensY", "Sensibilidade Y"]
+  ["sensX", "Movimentação X"],
+  ["sensY", "Movimentação Y"]
 ];
 const MAX_SENSI = 200;
 
@@ -1128,6 +1128,7 @@ function confirmName() {
     input.focus();
     return;
   }
+  window.__pendingShowNameModal = false;
   syncUserNameChip(name);
   hideNameModal();
   api("/api/me/name", { method: "PUT", body: { name: name } }).then(function(r) {

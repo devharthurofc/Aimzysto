@@ -497,7 +497,7 @@
         <a href="/#generator">🎯 Gerador</a>
         <a href="/stretch/">📱 Tela Esticada</a>
         <a href="/emulator/" class="active">🖥️ Emulador</a>
-        <a href="/painel-admin">💬 Fale com Admin</a>
+        <a href="/aimzy">💬 Fale com Admin</a>
       </nav>
     </div>
   </header>
@@ -582,11 +582,11 @@
 
             <div class="values">
               <div class="value-box">
-                <span class="name">Sensi X</span>
+                <span class="name">Movimentação X</span>
                 <div class="num" id="sensiXVal">0.00</div>
               </div>
               <div class="value-box">
-                <span class="name">Sensi Y</span>
+                <span class="name">Movimentação Y</span>
                 <div class="num" id="sensiYVal">0.00</div>
               </div>
               <div class="value-box">
@@ -603,8 +603,8 @@
 
         <div class="info-grid">
           <div class="info-box">
-            <h4>O que é Sensi X?</h4>
-            <p>Sensibilidade horizontal do mouse/câmera em movimento. Afeta a velocidade de deslocamento lateral.</p>
+            <h4>Como funciona a movimentação?</h4>
+            <p>O gerador usa o DPI como base: quanto maior o DPI, menor a sensibilidade de movimentação para manter uma resposta parecida.</p>
           </div>
 
           <div class="info-box">
@@ -640,24 +640,26 @@
   <script>
     const CONFIG = {
       low: {
-        sensiX: [0.20, 0.40],
-        sensiY: [0.18, 0.38],
-        dpiMouse: [1200, 1800],
-        dpiEmulator: [240, 320]
+        movement: 0.55,
+        dpiMouse: [1000, 1600],
+        dpiEmulator: 280
       },
       medium: {
-        sensiX: [0.41, 0.65],
-        sensiY: [0.38, 0.62],
-        dpiMouse: [800, 1200],
-        dpiEmulator: [280, 380]
+        movement: 0.72,
+        dpiMouse: [600, 1200],
+        dpiEmulator: 320
       },
       high: {
-        sensiX: [0.66, 1.00],
-        sensiY: [0.60, 0.95],
-        dpiMouse: [400, 800],
-        dpiEmulator: [320, 480]
+        movement: 0.92,
+        dpiMouse: [200, 800],
+        dpiEmulator: 400
       }
     };
+
+    const DPI_STEPS = [
+      200, 400, 600, 800,
+      ...Array.from({ length: 152 }, (_, index) => 900 + index * 100)
+    ];
 
     const PROFILE_LABELS = {
       low: 'Baixa',
@@ -693,12 +695,9 @@
       return Math.min(Math.max(value, min), max);
     }
 
-    function randomBetween(min, max) {
-      return Number((Math.random() * (max - min) + min).toFixed(2));
-    }
-
-    function intBetween(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    function chooseDpi(min, max) {
+      const options = DPI_STEPS.filter((dpi) => dpi >= min && dpi <= max);
+      return options[Math.floor(Math.random() * options.length)] || 800;
     }
 
     function getSelectedProfile() {
@@ -713,20 +712,17 @@
 
     function makeProfile(profile) {
       const base = CONFIG[profile] || CONFIG.medium;
-      const sensiX = randomBetween(base.sensiX[0], base.sensiX[1]);
-      const sensiY = randomBetween(base.sensiY[0], base.sensiY[1]);
-      const dpiMouse = intBetween(base.dpiMouse[0], base.dpiMouse[1]);
-      const dpiEmulator = intBetween(base.dpiEmulator[0], base.dpiEmulator[1]);
-
-      const x = Number(sensiX.toFixed(2));
-      const y = Number(Math.min(sensiY, base.sensiY[1]).toFixed(2));
+      const dpiMouse = chooseDpi(base.dpiMouse[0], base.dpiMouse[1]);
+      const dpiScale = Math.sqrt(800 / dpiMouse);
+      const x = Number(clamp(base.movement * dpiScale, 0.2, 1).toFixed(2));
+      const y = Number(clamp(x * 0.9, 0.2, 1).toFixed(2));
 
       return {
         profile,
         sensiX: x,
         sensiY: y,
         dpiMouse,
-        dpiEmulator
+        dpiEmulator: base.dpiEmulator
       };
     }
 

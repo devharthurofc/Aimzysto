@@ -9,7 +9,7 @@ create table public.settings (
   id text primary key default 'default',
   contact_link text default '',
   free_daily_limit integer default 3,
-  admin_panel_path text default '/painel-admin',
+  admin_panel_path text default '/aimzy',
   announcement jsonb default null,
   prices jsonb default '{}'::jsonb,
   plans jsonb default '[]'::jsonb,
