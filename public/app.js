@@ -255,11 +255,31 @@ function renderGrid(gridEl, values, names) {
 }
 
 async function copyText(text, msg) {
-  try { await navigator.clipboard.writeText(text); }
-  catch (e) {
+  const value = String(text == null ? "" : text);
+  let copied = false;
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(value);
+      copied = true;
+    } catch (e) {
+      copied = false;
+    }
+  }
+  if (!copied) {
     const ta = document.createElement("textarea");
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand("copy"); ta.remove();
+    ta.value = value;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    copied = document.execCommand("copy");
+    ta.remove();
+  }
+  if (!copied) {
+    toast("Não foi possível copiar. Selecione e copie manualmente.", true);
+    return;
   }
   toast(msg || "Copiado!");
 }

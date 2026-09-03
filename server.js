@@ -61,7 +61,9 @@ app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; " +
-    "script-src 'self'; " +
+    // As páginas públicas legadas usam scripts inline; mantemos os demais
+    // controles de segurança enquanto essa superfície é migrada para arquivos externos.
+    "script-src 'self' 'unsafe-inline'; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src https://fonts.gstatic.com; " +
     "img-src 'self' data: https://i.ytimg.com; " +
@@ -1758,7 +1760,8 @@ app.post(
       emulator: cleanStr(body.emulator, 20),
       mouseDpi: body.mouseDpi,
       mouseSens: body.mouseSens,
-      style: body.style
+      style: body.style,
+      preset: cleanStr(body.preset, 20)
     };
 
 
